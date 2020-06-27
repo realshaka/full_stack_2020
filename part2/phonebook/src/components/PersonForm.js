@@ -4,9 +4,11 @@ const PersonForm = (props) => {
 	return (
 		<form onSubmit={props.onSubmit}>
 				<div>
-					name: <input value={props.value} onChange={props.onChange}/>
+					name: <input value={props.value[0]} onChange={props.onChange[0]}/>
 				</div>
-				<div>number: <input /></div>
+				<div>
+					number: <input value={props.value[1]} onChange={props.onChange[1]}/>
+				</div>
 				<div>
 					<button type="submit">add</button>
 				</div>
