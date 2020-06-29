@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 
 const Languages = ({languages}) => {
 	return (
@@ -13,25 +13,41 @@ const Languages = ({languages}) => {
 	)
 }
 
-const Country = ({country}) => {
-	return (
-		<div>
-				<div>
-					<h1>{country.name}</h1>
-				</div>
-				<div>
-					<p>capital {country.capital}</p>
-					<p>population {country.population}</p>
-				</div>
-				<div>
-					<Languages languages = {country.languages}/>
-				</div>
-				<div>
-					<img src={country.flag} width='120' height='90' alt='logo'/>
-				</div>
-		</div>
-			
-	)
-}
+const Country = (props) => {
+	const country = props.country
+	const [ show, setShow ] = useState(props.show)
+	const handleShowClick =(event) => {
+		setShow(true)
+		event.preventDefault()
+	}
 
+	if (show===false) {
+		return (
+			<div>
+				{props.country.name} 
+				<button onClick={handleShowClick}>show</button>
+			</div>
+		)
+	} 
+
+		return (	
+			<div>
+					<div>
+						<h1>{country.name}</h1>
+					</div>
+					<div>
+						<p>capital {country.capital}</p>
+						<p>population {country.population}</p>
+					</div>
+					<div>
+						<Languages languages = {country.languages}/>
+					</div>
+					<div>
+						<img src={country.flag} width='120' height='90' alt='logo'/>
+					</div>
+			</div>
+				
+		)
+	
+}
 export default Country

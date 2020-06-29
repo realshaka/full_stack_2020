@@ -1,5 +1,6 @@
 import React from 'react'
 import Country from './Country'
+
 const Countries = ({countries}) => {
   if (countries.length===250){
     return(
@@ -17,14 +18,15 @@ const Countries = ({countries}) => {
     return (
       <div>
         {countries.map(country =>
-          <div key={country.alpha2Code}>{country.name}</div>)}
+            <Country key={country.alpha2Code} country={country} show={false}/>
+        )}        
       </div>
     )
   } else {
     return (
       <div>
         {countries.map(country =>
-            <Country key={country.alpha2Code} country={country}/>
+            <Country key={country.alpha2Code} country={country} show={true}/>
           )}
       </div>
     )
