@@ -1,5 +1,7 @@
 import React from 'react'
-import Country from './Country'
+import MultiCountry from './MultiCountry'
+import SingleCountry from './SingleCountry'
+
 
 const Countries = ({countries}) => {
   if (countries.length===250){
@@ -18,7 +20,7 @@ const Countries = ({countries}) => {
     return (
       <div>
         {countries.map(country =>
-            <Country key={country.alpha2Code} country={country} show={false}/>
+            <MultiCountry key={country.alpha2Code} country={country} show={false}/>
         )}        
       </div>
     )
@@ -26,7 +28,7 @@ const Countries = ({countries}) => {
     return (
       <div>
         {countries.map(country =>
-            <Country key={country.alpha2Code} country={country} show={true}/>
+            <SingleCountry key={country.alpha2Code} country={country}/>
           )}
       </div>
     )
