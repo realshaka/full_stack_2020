@@ -21,26 +21,6 @@
       "id": 4
     },
     {
-      "name": "abcd",
-      "number": "12345",
-      "id": 6
-    },
-    {
-      "name": "abc",
-      "number": "12345",
-      "id": 7
-    },
-    {
-      "name": "a",
-      "number": "12345",
-      "id": 8
-    },
-    {
-      "name": "b",
-      "number": "1234",
-      "id": 9
-    },
-    {
       "name": "abcsdf",
       "number": "12345",
       "id": 11
@@ -54,11 +34,6 @@
       "name": "asdfas",
       "number": "12342134",
       "id": 13
-    },
-    {
-      "name": "qwer",
-      "number": "12345",
-      "id": 14
     },
     {
       "name": "zxcv",

@@ -3,6 +3,7 @@ import Persons from './Persons'
 import Filter from './Filter'
 import PersonForm from './PersonForm'
 import Notification from './Notification'
+import Error from './Error'
 import service from './Service'
 
 const App = () => {
@@ -11,6 +12,7 @@ const App = () => {
 	const [newNum, setNewNum] = useState('')
 	const [filter, setFilter] = useState('')
 	const [noti, setNoti] = useState(null)
+	const [error, setError] = useState(null)
 	const personsToShow = persons.filter(person => person.name.toLowerCase().trim().includes(filter.trim().toLowerCase()) === true)
 
 	const hook = () => {
@@ -46,6 +48,13 @@ const App = () => {
 				console.log('data updated')
 				console.log(response)
 				setPersons(persons.map(person => person.id !== personUpdate.id ? person: response))
+				showNoti(`Updated ${name} phone number`)	
+			}).catch(error => {
+				console.log(error)
+				showError(
+					`Information of '${name}' was already deleted from server`
+				)
+				setPersons(persons.filter(n => n.id !== personUpdate.id))
 			})
 		}
 	}
@@ -57,6 +66,15 @@ const App = () => {
 			setNoti(null)
 		}, 5000)
 	}
+
+	const showError = (message) => {
+		console.log(message)
+		setError(message)
+		setTimeout(() => {
+			setError(null)
+		}, 5000)
+	}
+
 	const addName = (event) => {
 		let nameInput = newName.trim()
 		let numInput = newNum.trim()
@@ -65,7 +83,6 @@ const App = () => {
 		
 		if (nameAdded) {
 			updatePhone(nameInput, numInput)
-			showNoti(`Updated ${nameInput} phone number`)
 			//alert(`${nameInput} is already added to phonebook`)
 			return
 		}
@@ -85,6 +102,7 @@ const App = () => {
 		<div>
 			<h2>Phonebook</h2>
 			<Notification message={noti}/>
+			<Error message={error}/>
 			<Filter value={filter} onChange={handleFilter} />
 			<h2>Add a new</h2>
 			<PersonForm onSubmit={addName} value={[newName, newNum]} onChange={[handleNamesChange, handleNumChange]} />
