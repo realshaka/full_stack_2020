@@ -38,7 +38,6 @@ const SingleCountry = (props) => {
 				})
 				console.log(result)
 				setWeather(result.data)
-				console.log(typeof(weather))
 		}
 		fetchAPI()
 	}, [])
