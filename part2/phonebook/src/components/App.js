@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Persons from './Persons'
 import Filter from './Filter'
 import PersonForm from './PersonForm'
+import Notification from './Notification'
 import service from './Service'
 
 const App = () => {
@@ -9,6 +10,7 @@ const App = () => {
 	const [newName, setNewName] = useState('')
 	const [newNum, setNewNum] = useState('')
 	const [filter, setFilter] = useState('')
+	const [noti, setNoti] = useState(null)
 	const personsToShow = persons.filter(person => person.name.toLowerCase().trim().includes(filter.trim().toLowerCase()) === true)
 
 	const hook = () => {
@@ -47,6 +49,14 @@ const App = () => {
 			})
 		}
 	}
+	
+	const showNoti = (message) => {
+		console.log(message)
+		setNoti(message)
+		setTimeout(() => {
+			setNoti(null)
+		}, 5000)
+	}
 	const addName = (event) => {
 		let nameInput = newName.trim()
 		let numInput = newNum.trim()
@@ -55,6 +65,7 @@ const App = () => {
 		
 		if (nameAdded) {
 			updatePhone(nameInput, numInput)
+			showNoti(`Updated ${nameInput} phone number`)
 			//alert(`${nameInput} is already added to phonebook`)
 			return
 		}
@@ -62,6 +73,7 @@ const App = () => {
 		service.createPerson({ name: nameInput, number: numInput })
 		.then(response => {
 			setPersons(persons.concat(response))
+			showNoti(`Added ${nameInput}`)
 		})
 		
 		setNewName('')
@@ -72,6 +84,7 @@ const App = () => {
 	return (
 		<div>
 			<h2>Phonebook</h2>
+			<Notification message={noti}/>
 			<Filter value={filter} onChange={handleFilter} />
 			<h2>Add a new</h2>
 			<PersonForm onSubmit={addName} value={[newName, newNum]} onChange={[handleNamesChange, handleNumChange]} />
