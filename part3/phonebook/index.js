@@ -27,6 +27,13 @@ app.get('/api/persons', (req, res) => {
     res.json(persons)
 })
 
+app.get('/info/', (req, res) => {
+    const date = new Date()
+    const text = `Phonebook has info of ${persons.length} people 
+    \n${date}`
+    console.log(text)
+    res.end(text)
+})
 
 const port = 3001
 app.listen(port)
