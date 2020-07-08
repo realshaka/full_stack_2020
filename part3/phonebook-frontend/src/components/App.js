@@ -36,29 +36,29 @@ const App = () => {
 	const handleFilter = (event) => {
 		setFilter(event.target.value)
 	}
-	
+
 	const updatePhone = (name, phone) => {
-		const message = `${name} is already added to phonebook, replace the old number with a new one? ` 
+		const message = `${name} is already added to phonebook, replace the old number with a new one? `
 		const confirm = window.confirm(message)
-		let personUpdate = persons.find(person => person.name === name )
-		personUpdate = {...personUpdate, number: phone}
-		if(confirm===true) {
+		let personUpdate = persons.find(person => person.name === name)
+		personUpdate = { ...personUpdate, number: phone }
+		if (confirm === true) {
 			service.updatePerson(personUpdate)
-			.then(response => {
-				console.log('data updated')
-				console.log(response)
-				setPersons(persons.map(person => person.id !== personUpdate.id ? person: response))
-				showNoti(`Updated ${name} phone number`)	
-			}).catch(error => {
-				console.log(error)
-				showError(
-					`Information of '${name}' was already deleted from server`
-				)
-				setPersons(persons.filter(n => n.id !== personUpdate.id))
-			})
+				.then(response => {
+					console.log('data updated')
+					console.log(response)
+					setPersons(persons.map(person => person.id !== personUpdate.id ? person : response))
+					showNoti(`Updated ${name} phone number`)
+				}).catch(error => {
+					console.log(error)
+					showError(
+						`Information of '${name}' was already deleted from server`
+					)
+					setPersons(persons.filter(n => n.id !== personUpdate.id))
+				})
 		}
 	}
-	
+
 	const showNoti = (message) => {
 		console.log(message)
 		setNoti(message)
@@ -80,19 +80,25 @@ const App = () => {
 		let numInput = newNum.trim()
 		event.preventDefault()
 		const nameAdded = persons.some(person => person.name === nameInput)
-		
+
 		if (nameAdded) {
 			updatePhone(nameInput, numInput)
 			//alert(`${nameInput} is already added to phonebook`)
 			return
 		}
 
-		service.createPerson({ name: nameInput, number: numInput })
-		.then(response => {
-			setPersons(persons.concat(response))
-			showNoti(`Added ${nameInput}`)
-		})
-		
+		service
+			.createPerson({ name: nameInput, number: numInput })
+			.then(response => {
+				setPersons(persons.concat(response))
+				showNoti(`Added ${nameInput}`)
+			})
+			.catch(error => {
+				// this is the way to access the error message
+				console.log(error.response.data)
+				showError(error.response.data.error)
+			})
+
 		setNewName('')
 		setNewNum('')
 		console.log(persons)
@@ -101,8 +107,8 @@ const App = () => {
 	return (
 		<div>
 			<h2>Phonebook</h2>
-			<Notification message={noti}/>
-			<Error message={error}/>
+			<Notification message={noti} />
+			<Error message={error} />
 			<Filter value={filter} onChange={handleFilter} />
 			<h2>Add a new</h2>
 			<PersonForm onSubmit={addName} value={[newName, newNum]} onChange={[handleNamesChange, handleNumChange]} />
