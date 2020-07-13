@@ -67,6 +67,25 @@ describe('when there is initially some blogs saved', () => {
 
       expect(blogsAtEnd.length).toBe(helper.initialBlogs.length)
     })
+
+    test('set likes default', async() => {
+      const newBlog = {
+        title: "newTest",
+        author: "tantan",
+        url: "www.somthing.org",
+      }
+
+      const res = await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+
+      const blogsAtEnd = await helper.blogsInDb()
+      expect(blogsAtEnd.length).toBe(helper.initialBlogs.length + 1)
+      
+      expect(res.body.likes).toBe(0)
+    })
   })
 })
 
