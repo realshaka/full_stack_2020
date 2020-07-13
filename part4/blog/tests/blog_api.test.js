@@ -25,10 +25,47 @@ describe('when there is initially some blogs saved', () => {
 
   test('id defined', async () => {
     const res = await api.get('/api/blogs')
-    console.log(res.body)
     res.body.map(blog => {
       expect(blog.id).toBeDefined()
       expect(blog._id).not.toBeDefined()
+    })
+  })
+
+  describe('addition of a new blog', () => {
+    test('succeeds with valid data', async () => {
+      const newBlog = {
+        title: "newTest",
+        author: "tantan",
+        url: "www.somthing.org",
+        likes: 43
+      }
+
+      await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+
+      const blogsAtEnd = await helper.blogsInDb()
+      expect(blogsAtEnd.length).toBe(helper.initialBlogs.length + 1)
+
+      const url = blogsAtEnd.map(n => n.url)
+      expect(url).toContain('www.somthing.org')
+    })
+
+    test('fails with status code 400 if data invalid', async () => {
+      const newBlog = {
+        title: "newTest"
+      }
+
+      await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(400)
+
+      const blogsAtEnd = await helper.blogsInDb()
+
+      expect(blogsAtEnd.length).toBe(helper.initialBlogs.length)
     })
   })
 })
