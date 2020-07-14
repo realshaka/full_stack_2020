@@ -1,4 +1,3 @@
-const { count } = require("../models/blog")
 
 const dummy = (blogs) => {
   return 1

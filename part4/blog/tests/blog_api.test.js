@@ -87,6 +87,43 @@ describe('when there is initially some blogs saved', () => {
       expect(res.body.likes).toBe(0)
     })
   })
+
+  describe('deletion of a blog', () => {
+    test('succeeds with status code 204 if id is valid', async () => {
+      const blogsAtStart = await helper.blogsInDb()
+      const blogToDelete = blogsAtStart[0]
+  
+      await api
+        .delete(`/api/blogs/${blogToDelete.id}`)
+        .expect(204)
+  
+      const blogsAtEnd = await helper.blogsInDb()
+  
+      expect(blogsAtEnd).toHaveLength(
+        helper.initialBlogs.length - 1
+      )
+  
+      const url = blogsAtEnd.map(r => r.url)
+  
+      expect(url).not.toContain(blogToDelete.content)
+    })
+  })
+
+  describe('update a blog', () => {
+    test('succeeds with status code 200 if id is valid', async () => {
+      const blogs= await helper.blogsInDb()
+      const blogToUpdateID = blogs[0].id
+      const update = { likes: 99 }
+
+      const result = await api
+        .put(`/api/blogs/${blogToUpdateID}`)
+        .send(update)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+      
+      expect(result.body.likes).toBe(update.likes)
+    })
+  })
 })
 
 afterAll(() => {
