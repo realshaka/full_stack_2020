@@ -117,4 +117,4 @@ dist
 
 # rest test
 .rest
-.playground.js
+*.playground.js
