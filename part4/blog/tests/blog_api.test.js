@@ -9,8 +9,15 @@ const User = require('../models/user')
 
 describe('when there is initially some blogs saved', () => {
   beforeEach(async () => {
+    const user = {
+      username: 'tester',
+      name: 'tester',
+      password: 'tester',
+    };
+    await User.deleteMany({})
+    const regUser = await api.post('/api/users').send(user);
     await Blog.deleteMany({})
-    const blogObjs = helper.initialBlogs.map(blog => new Blog(blog))
+    const blogObjs = helper.initialBlogs.map(blog => new Blog({...blog, user:regUser.body.id}))
     const promiseArray = blogObjs.map(blog => blog.save())
     await Promise.all(promiseArray)
   })
@@ -41,8 +48,16 @@ describe('when there is initially some blogs saved', () => {
         likes: 43
       }
 
+      const user = {
+        username: "tester",
+        password: "tester"
+      }
+      
+      const loggedUser = await api.post('/api/login').send(user)
+      
       await api
         .post('/api/blogs')
+        .set('Authorization', 'bearer ' + loggedUser.body.token)
         .send(newBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/)
@@ -59,8 +74,16 @@ describe('when there is initially some blogs saved', () => {
         title: "newTest"
       }
 
+      const user = {
+        username: "tester",
+        password: "tester"
+      }
+      
+      const loggedUser = await api.post('/api/login').send(user)
+
       await api
         .post('/api/blogs')
+        .set('Authorization', 'bearer ' + loggedUser.body.token)
         .send(newBlog)
         .expect(400)
 
@@ -76,8 +99,16 @@ describe('when there is initially some blogs saved', () => {
         url: "www.somthing.org",
       }
 
+      const user = {
+        username: "tester",
+        password: "tester"
+      }
+      
+      const loggedUser = await api.post('/api/login').send(user)
+
       const res = await api
         .post('/api/blogs')
+        .set('Authorization', 'bearer ' + loggedUser.body.token)
         .send(newBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/)
@@ -93,9 +124,16 @@ describe('when there is initially some blogs saved', () => {
     test('succeeds with status code 204 if id is valid', async () => {
       const blogsAtStart = await helper.blogsInDb()
       const blogToDelete = blogsAtStart[0]
-  
+      
+      const user = {
+        username: "tester",
+        password: "tester"
+      }
+        
+      const loggedUser = await api.post('/api/login').send(user)
       await api
         .delete(`/api/blogs/${blogToDelete.id}`)
+        .set('Authorization', 'bearer ' + loggedUser.body.token)
         .expect(204)
   
       const blogsAtEnd = await helper.blogsInDb()
@@ -106,7 +144,7 @@ describe('when there is initially some blogs saved', () => {
   
       const url = blogsAtEnd.map(r => r.url)
   
-      expect(url).not.toContain(blogToDelete.content)
+      expect(url).not.toContain(blogToDelete.url)
     })
   })
 
@@ -129,7 +167,7 @@ describe('when there is initially some blogs saved', () => {
   describe('when there is initially one user at db', () => {
     beforeEach(async () => {
       await User.deleteMany({})
-      const user = new User({ username: 'root', password: 'sekret' })
+      const user = new User({ username: 'tester', password: 'sekret' })
       await user.save()
     })
 
@@ -159,8 +197,8 @@ describe('when there is initially some blogs saved', () => {
       const usersAtStart = await helper.usersInDb()
 
       const newUser = {
-        username: 'root',
-        name: 'Superuser',
+        username: 'tester',
+        name: 'tester',
         password: 'sthsecret',
       }
 
