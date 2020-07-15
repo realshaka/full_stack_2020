@@ -92,6 +92,22 @@ describe('when there is initially some blogs saved', () => {
       expect(blogsAtEnd.length).toBe(helper.initialBlogs.length)
     })
 
+    test('fails with status code 401 if no token', async () => {
+      const newBlog = {
+        title: "newTest"
+      }
+
+      
+      await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(401)
+
+      const blogsAtEnd = await helper.blogsInDb()
+
+      expect(blogsAtEnd.length).toBe(helper.initialBlogs.length)
+    })
+
     test('set likes default', async() => {
       const newBlog = {
         title: "newTest",
