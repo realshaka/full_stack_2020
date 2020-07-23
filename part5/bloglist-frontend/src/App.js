@@ -4,7 +4,7 @@ import Blog from './components/Blog'
 import LoginStatus from './components/LoginStatus'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
-
+import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -12,16 +12,11 @@ import loginService from './services/login'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [newBlog, setNewBlog] = useState({
-    title: '',
-    author: '',
-    url: ''
-  })
   //const [errorMessage, setErrorMessage] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [ notification, setNotification ] = useState(null)
+  const [notification, setNotification] = useState(null)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -55,7 +50,7 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (error) {
-      notifyWith(error.response.data.error,'error')
+      notifyWith(error.response.data.error, 'error')
       //console.log(error.response.data.error)
     }
 
@@ -86,13 +81,11 @@ const App = () => {
     </form>
   )
 
-  const handleBlogChange = (event) => {
-    setNewBlog({
-      ...newBlog,
-      [event.target.name]: event.target.value
-    })
-  }
-
+  const blogForm = () => (
+    <Togglable buttonLabel="new blog">
+      <BlogForm createBlog={addBLog} />
+    </Togglable>
+  )
 
   const BlogsList = (props) => {
     return (
@@ -104,18 +97,12 @@ const App = () => {
     )
   }
 
-  const addBLog = (event) => {
-    event.preventDefault()
+  const addBLog = (blogObject) => {
     blogService.setToken(user.token)
-    blogService.create(newBlog)
+    blogService.create(blogObject)
       .then(returnedBlog => {
         setBlogs(blogs.concat(returnedBlog))
-        notifyWith(`A new blog ${returnedBlog.title} by ${returnedBlog.author} is added`)
-        setNewBlog({
-          title: '',
-          author: '',
-          url: ''
-        })
+        notifyWith(`A new blog ${returnedBlog.title} by ${returnedBlog.author} is added`)     
       })
       .catch(error => {
         console.log(error.response.data.error)
@@ -124,21 +111,22 @@ const App = () => {
     blogService.setToken(user.token)
   }
 
-  const notifyWith = (message, type='success') => {
+  const notifyWith = (message, type = 'success') => {
     setNotification({ message, type })
     setTimeout(() => {
       setNotification(null)
     }, 3000)
   }
+
   return (
     <div>
-      <h2>blogs</h2>
+      <h1>Blogs</h1>
       <Notification notification={notification} />
       {user === null ?
         loginForm() :
         <div>
           <LoginStatus user={user} />
-          <BlogForm title={newBlog.title} author={newBlog.author} url={newBlog.url} handleBlogChange={handleBlogChange} onSubmit={addBLog} />
+          {blogForm()}
           {BlogsList(blogs)}
         </div>}
       {/* {BlogsList(blogs)} */}
