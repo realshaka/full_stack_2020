@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import LoginStatus from './components/LoginStatus'
 import BlogForm from './components/BlogForm'
+import Notification from './components/Notification'
 
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -16,10 +17,11 @@ const App = () => {
     author: '',
     url: ''
   })
-  const [errorMessage, setErrorMessage] = useState(null)
+  //const [errorMessage, setErrorMessage] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+  const [ notification, setNotification ] = useState(null)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -47,16 +49,14 @@ const App = () => {
         'loggedBlogsUser', JSON.stringify(user)
       )
 
-      console.log(user.token)
       blogService.setToken(user.token)
+      notifyWith("Login Successful")
       setUser(user)
       setUsername('')
       setPassword('')
-    } catch (exception) {
-      setErrorMessage('Wrong credentials')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+    } catch (error) {
+      notifyWith(error.response.data.error,'error')
+      //console.log(error.response.data.error)
     }
 
     console.log('logging in with', username, password)
@@ -108,20 +108,32 @@ const App = () => {
     event.preventDefault()
     blogService.setToken(user.token)
     blogService.create(newBlog)
-      .then(returnedNote => {
-        setBlogs(blogs.concat(returnedNote))
+      .then(returnedBlog => {
+        setBlogs(blogs.concat(returnedBlog))
+        notifyWith(`A new blog ${returnedBlog.title} by ${returnedBlog.author} is added`)
         setNewBlog({
           title: '',
           author: '',
           url: ''
         })
       })
+      .catch(error => {
+        console.log(error.response.data.error)
+        notifyWith(`${error.response.data.error} `, 'error')
+      })
     blogService.setToken(user.token)
+  }
+
+  const notifyWith = (message, type='success') => {
+    setNotification({ message, type })
+    setTimeout(() => {
+      setNotification(null)
+    }, 3000)
   }
   return (
     <div>
       <h2>blogs</h2>
-
+      <Notification notification={notification} />
       {user === null ?
         loginForm() :
         <div>
