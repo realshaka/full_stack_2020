@@ -27,6 +27,7 @@ const Blog = ({ blog, updateLikes, deleteBlog }) => {
   }
 
   const deleteThis = (event) => {
+    event.preventDefault()
     deleteBlog(blog.id)
   }
 

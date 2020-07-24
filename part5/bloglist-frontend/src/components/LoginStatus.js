@@ -2,6 +2,7 @@ import React from 'react'
 
 const LoginStatus = ({ user }) => {
   const logout = (event) => {
+    event.preventDefault()
     window.localStorage.removeItem('loggedBlogsUser')
     window.location.reload()
   }

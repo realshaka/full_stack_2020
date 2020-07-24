@@ -7,7 +7,7 @@ import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
-
+import LoginForm from './components/LoginForm'
 
 
 const App = () => {
@@ -46,7 +46,7 @@ const App = () => {
       )
 
       blogService.setToken(user.token)
-      notifyWith("Login Successful")
+      notifyWith('Login Successful')
       setUser(user)
       setUsername('')
       setPassword('')
@@ -59,27 +59,13 @@ const App = () => {
   }
 
   const loginForm = () => (
-    <form onSubmit={handleLogin}>
-      <div>
-        username
-          <input
-          type="text"
-          value={username}
-          name="Username"
-          onChange={({ target }) => setUsername(target.value)}
-        />
-      </div>
-      <div>
-        password
-          <input
-          type="password"
-          value={password}
-          name="Password"
-          onChange={({ target }) => setPassword(target.value)}
-        />
-      </div>
-      <button type="submit">login</button>
-    </form>
+    <LoginForm
+      username={username}
+      password={password}
+      handleUsernameChange={({ target }) => setUsername(target.value)}
+      handlePasswordChange={({ target }) => setPassword(target.value)}
+      handleSubmit={handleLogin}
+    />
   )
 
   const blogForm = () => (
@@ -92,7 +78,7 @@ const App = () => {
     return (
       <div>
         {props.map(blog =>
-          <Blog key={blog.id} blog={blog} updateLikes={updateLikes} deleteBlog={deleteBlog}/>
+          <Blog key={blog.id} blog={blog} updateLikes={updateLikes} deleteBlog={deleteBlog} />
         )}
       </div>
     )
@@ -103,7 +89,9 @@ const App = () => {
     blogService.setToken(user.token)
     blogService.create(blogObject)
       .then(returnedBlog => {
-        setBlogs(blogs.concat(returnedBlog))
+        blogService.getAll().then(blogs =>
+          setBlogs(blogs)
+        )
         notifyWith(`A new blog ${returnedBlog.title} by ${returnedBlog.author} is added`)
       })
       .catch(error => {
@@ -116,9 +104,9 @@ const App = () => {
     blogService.setToken(user.token)
     blogService.update(blogObject.id, blogObject)
       .then(returnedBlog => {
-        setBlogs(blogs.map(blog => 
-          blog.id !== returnedBlog.id ? 
-          blog : {...blog, likes: returnedBlog.likes}))
+        setBlogs(blogs.map(blog =>
+          blog.id !== returnedBlog.id ?
+            blog : { ...blog, likes: returnedBlog.likes }))
         notifyWith(`Liked blog ${returnedBlog.title}`)
       })
       .catch(error => {
@@ -140,7 +128,7 @@ const App = () => {
     const ok = window.confirm(`Remove blog ${toDelete.title} by ${toDelete.author}`)
     if (ok) {
       blogService.remove(id)
-        .then(response => {
+        .then(() => {
           setBlogs(blogs.filter(b => b.id !== id))
           notifyWith(`Deleted blog ${toDelete.title} by ${toDelete.author}`)
         }).catch(error => {
