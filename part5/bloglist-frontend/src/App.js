@@ -1,4 +1,4 @@
-import React, { useState, useEffect , useRef} from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 
 import Blog from './components/Blog'
 import LoginStatus from './components/LoginStatus'
@@ -92,7 +92,7 @@ const App = () => {
     return (
       <div>
         {props.map(blog =>
-          <Blog key={blog.id} blog={blog} />
+          <Blog key={blog.id} blog={blog} updateLikes={updateLikes} deleteBlog={deleteBlog}/>
         )}
       </div>
     )
@@ -104,7 +104,22 @@ const App = () => {
     blogService.create(blogObject)
       .then(returnedBlog => {
         setBlogs(blogs.concat(returnedBlog))
-        notifyWith(`A new blog ${returnedBlog.title} by ${returnedBlog.author} is added`)     
+        notifyWith(`A new blog ${returnedBlog.title} by ${returnedBlog.author} is added`)
+      })
+      .catch(error => {
+        console.log(error.response.data.error)
+        notifyWith(`${error.response.data.error} `, 'error')
+      })
+  }
+
+  const updateLikes = (blogObject) => {
+    blogService.setToken(user.token)
+    blogService.update(blogObject.id, blogObject)
+      .then(returnedBlog => {
+        setBlogs(blogs.map(blog => 
+          blog.id !== returnedBlog.id ? 
+          blog : {...blog, likes: returnedBlog.likes}))
+        notifyWith(`Liked blog ${returnedBlog.title}`)
       })
       .catch(error => {
         console.log(error.response.data.error)
@@ -117,6 +132,22 @@ const App = () => {
     setTimeout(() => {
       setNotification(null)
     }, 3000)
+  }
+
+  const deleteBlog = (id) => {
+    blogService.setToken(user.token)
+    const toDelete = blogs.find(b => b.id === id)
+    const ok = window.confirm(`Remove blog ${toDelete.title} by ${toDelete.author}`)
+    if (ok) {
+      blogService.remove(id)
+        .then(response => {
+          setBlogs(blogs.filter(b => b.id !== id))
+          notifyWith(`Deleted blog ${toDelete.title} by ${toDelete.author}`)
+        }).catch(error => {
+          console.log(error.response.data.error)
+          notifyWith(`${error.response.data.error} `, 'error')
+        })
+    }
   }
 
   return (
