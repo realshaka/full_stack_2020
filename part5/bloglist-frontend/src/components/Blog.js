@@ -36,7 +36,7 @@ const Blog = ({ blog, updateLikes, deleteBlog }) => {
       <div className='blog-basic' style={hideWhenVisible}>
         <div>
           {blog.title} {blog.author}
-          <button onClick={toggleVisibility}>view</button>
+          <button id='view-btn' onClick={toggleVisibility}>view</button>
         </div>
       </div>
       <div className='blog-detail' style={showWhenVisible}>
@@ -47,7 +47,7 @@ const Blog = ({ blog, updateLikes, deleteBlog }) => {
         <div className='blog-detail'>{blog.url}</div>
         <div className='blog-detail'>
           likes: {blog.likes}
-          <button onClick={addLike} style={{ color: '#0000FF' }}>like</button>
+          <button id='like-btn' onClick={addLike} style={{ color: '#0000FF' }}>like</button>
         </div>
         <div>{blog.user.username}</div>
         <button onClick={deleteThis} style={{ color: '#FF0000' }}>remove</button>
