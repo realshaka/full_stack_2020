@@ -6,6 +6,7 @@ import { setNoti } from '../reducers/notificationReducer'
 import { voteUp } from '../reducers/anecdoteReducer'
 
 const AnecdoteList = (props) => {
+
   const anecdotes = useSelector(state => {
     const filter = state.filter.toLowerCase().trim()
     return state.anecdote.filter(quote => quote.content.toLowerCase().trim().includes(filter))

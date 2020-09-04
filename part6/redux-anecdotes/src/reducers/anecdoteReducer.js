@@ -20,13 +20,13 @@ const asObject = (anecdote) => {
 
 const initialState = anecdotesAtStart.map(asObject)
 
-const reducer = (state = initialState, action) => {
+const reducer = (state = [], action) => {
   console.log('state now: ', state)
   console.log('action: ', action)
   switch (action.type) {
     case 'NEW_QUOTE': 
       return state.concat(action.data)
-    
+
     case 'VOTE': {
       const id = action.data.id
       const quoteToChange = state.find(n => n.id === id)
@@ -37,6 +37,9 @@ const reducer = (state = initialState, action) => {
       return state.map(quote =>
         quote.id !== id ? quote : changeQuote)
     }
+
+    case 'INIT_QUOTES':
+      return action.data
 
     default: return state
   }
@@ -52,12 +55,14 @@ export const voteUp = (id) => {
 export const createQuote = (quote) => {
   return {
     type: 'NEW_QUOTE',
-    data: {
-      content: quote,
-      id: getId(),
-      votes: 0
-    },
+    data: quote
   }
 }
 
+export const initializeQuotes = (quotes) => {
+  return {
+    type: 'INIT_QUOTES',
+    data: quotes,
+  }
+}
 export default reducer

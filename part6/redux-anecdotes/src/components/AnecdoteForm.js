@@ -2,22 +2,24 @@ import React from 'react'
 import { useDispatch } from 'react-redux'
 import { createQuote } from '../reducers/anecdoteReducer'
 import { setNoti } from '../reducers/notificationReducer'
+import quoteService from '../services/quotes'
 
 const AnecdoteForm = (props) => {
   const dispatch = useDispatch()
 
-  const addQuote = (event) => {
+  const addQuote = async (event) => {
     event.preventDefault()
-    const quote = event.target.quote.value
+    const input = event.target.quote.value
     event.target.quote.value = ''
-    if (quote !== '') {
-      dispatch(createQuote(quote))
-      popNoti(quote)
+    if (input !== '') {
+      const newQuote = await quoteService.createNew(input)
+      dispatch(createQuote(newQuote))
+      popNoti(newQuote.content)
     }
   }
 
   const popNoti = (quote) => {
-    dispatch(setNoti('You create \'' + quote + '\''))
+    dispatch(setNoti('You created \'' + quote + '\''))
     setTimeout(
       () => {
         dispatch(setNoti(''))
