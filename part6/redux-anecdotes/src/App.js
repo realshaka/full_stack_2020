@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react'
+import React, { useEffect } from 'react'
 
 import { useDispatch } from 'react-redux'
 
@@ -12,16 +12,16 @@ import { initializeQuotes } from './reducers/anecdoteReducer'
 const App = () => {
   const dispatch = useDispatch()
   useEffect(() => {
-    quoteService.getAll().then(quotes => dispatch(initializeQuotes(quotes)))
-  },[dispatch])
+    dispatch(initializeQuotes())
+  }, [dispatch])
 
   return (
     <div>
       <h2>Anecdotes</h2>
-      <Notification/>
-      <Filter/>
-      <AnecdoteList/>
-      <AnecdoteForm/>
+      <Notification />
+      <Filter />
+      <AnecdoteList />
+      <AnecdoteForm />
     </div>
   )
 }

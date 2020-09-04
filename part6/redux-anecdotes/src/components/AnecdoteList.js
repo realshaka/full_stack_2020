@@ -15,18 +15,12 @@ const AnecdoteList = (props) => {
   anecdotes.sort((a, b) => b.votes - a.votes)
   const dispatch = useDispatch()
 
-  const vote = (id) => {
-    dispatch(voteUp(id))
-    console.log('vote', id)
+  const vote = (quote) => {
+    dispatch(voteUp(quote))
+    dispatch(setNoti(`you voted '${quote.content}'`, 5000))
   }
 
   const popNoti = (notification) => {
-    dispatch(setNoti('You voted \'' + notification + '\''))
-    setTimeout(
-      () => {
-        dispatch(setNoti(''))
-      }, 5000
-    )
   }
 
   return (
@@ -39,7 +33,7 @@ const AnecdoteList = (props) => {
           <div>
             has {anecdote.votes}
             <button onClick={() => {
-              vote(anecdote.id)
+              vote(anecdote)
               popNoti(anecdote.content)
             }}>vote</button>
           </div>

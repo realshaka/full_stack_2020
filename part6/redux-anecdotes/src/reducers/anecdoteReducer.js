@@ -1,3 +1,5 @@
+import quoteService from '../services/quotes'
+
 const anecdotesAtStart = [
   'If it hurts, do it more often',
   'Adding manpower to a late software project makes it later!',
@@ -24,18 +26,14 @@ const reducer = (state = [], action) => {
   console.log('state now: ', state)
   console.log('action: ', action)
   switch (action.type) {
-    case 'NEW_QUOTE': 
+    case 'NEW_QUOTE':
       return state.concat(action.data)
 
     case 'VOTE': {
       const id = action.data.id
-      const quoteToChange = state.find(n => n.id === id)
-      const changeQuote = {
-        ...quoteToChange,
-        votes: quoteToChange.votes + 1
-      }
+      console.log(id)
       return state.map(quote =>
-        quote.id !== id ? quote : changeQuote)
+        quote.id !== id ? quote : action.data)
     }
 
     case 'INIT_QUOTES':
@@ -45,24 +43,34 @@ const reducer = (state = [], action) => {
   }
 }
 
-export const voteUp = (id) => {
-  return {
-    type: 'VOTE',
-    data: {id}
+export const voteUp = (quote) => {
+  return async dispatch => {
+    const response = await quoteService.updateVote(quote)
+    console.log(response)
+    dispatch({
+      type: 'VOTE',
+      data: response
+    })
   }
 }
 
 export const createQuote = (quote) => {
-  return {
-    type: 'NEW_QUOTE',
-    data: quote
+  return async dispatch => {
+    const newQuote = await quoteService.createNew(quote)
+    dispatch({
+      type: 'NEW_QUOTE',
+      data: newQuote
+    })
   }
 }
 
-export const initializeQuotes = (quotes) => {
-  return {
-    type: 'INIT_QUOTES',
-    data: quotes,
+export const initializeQuotes = () => {
+  return async dispatch => {
+    const quotes = await quoteService.getAll()
+    dispatch({
+      type: 'INIT_QUOTES',
+      data: quotes,
+    })
   }
 }
 export default reducer
