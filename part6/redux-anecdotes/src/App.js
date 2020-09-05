@@ -6,7 +6,6 @@ import AnecdoteForm from './components/AnecdoteForm'
 import AnecdoteList from './components/AnecdoteList'
 import Notification from './components/Notification'
 import Filter from './components/Filter'
-import quoteService from './services/quotes'
 import { initializeQuotes } from './reducers/anecdoteReducer'
 
 const App = () => {

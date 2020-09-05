@@ -1,8 +1,11 @@
+let id = 0
+
 const reducer = (state = '', action) => {
   console.log('action: ', action)
   switch (action.type) {
     case 'SET_NOTI': {
-      state = action.data
+      id = action.data[1]
+      state = action.data[0]
       return state
     }
 
@@ -12,20 +15,19 @@ const reducer = (state = '', action) => {
 
     default: return state
   }
-
 }
 
 export const setNoti = (noti, time) => {
   return async dispatch => {
-    await dispatch({
+    clearTimeout(id)
+    const newID = setTimeout(() => {
+      dispatch(setNotiNull())
+    }, time * 1000)
+    dispatch({
       type: 'SET_NOTI',
-      data: noti
+      data: [noti, newID]
     })
-    setTimeout(() => {
-      dispatch({
-        type: 'SET_NOTI_NULL'
-      })
-    }, 5000)
+
   }
 }
 

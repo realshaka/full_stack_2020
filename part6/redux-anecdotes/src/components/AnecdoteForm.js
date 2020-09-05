@@ -1,5 +1,6 @@
 import React from 'react'
 import { useDispatch } from 'react-redux'
+import { connect } from 'react-redux' 
 import { createQuote } from '../reducers/anecdoteReducer'
 import { setNoti } from '../reducers/notificationReducer'
 
@@ -11,8 +12,8 @@ const AnecdoteForm = (props) => {
     const input = event.target.quote.value
     event.target.quote.value = ''
     if (input !== '') {
-      dispatch(createQuote(input))
-      dispatch(setNoti('You created \'' + input + '\'', 5000))
+      props.createQuote(input)
+      props.setNoti('You created \'' + input + '\'', 5)
     }
   }
 
@@ -29,4 +30,4 @@ const AnecdoteForm = (props) => {
   )
 }
 
-export default AnecdoteForm
+export default connect(null, {createQuote, setNoti} )(AnecdoteForm)
